@@ -1,14 +1,5 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from settings import Settings
 
-settings = Settings()
+from sqlalchemy.orm import DeclarativeBase
 
-engine = create_engine(settings.db_url)
-
-Session = sessionmaker(engine)
-
-
-def get_db_session() -> Session:
-    return Session 
-
+class Base(DeclarativeBase):
+    pass
