@@ -6,14 +6,14 @@ env.read_env('.local.env')
 
 class Settings(BaseSettings):
     DB_HOST: str = 'localhost'
-    DB_PORT = 5432
-    DB_USER = env('DB_USER')
-    DB_PASSWORD = env('DB_PASSWORD')
-    DB_DRIVER = 'postgresql+psycopg2'
-    DB_NAME = env('DB_NAME')
-    CACHE_HOST = 'localhost'
-    CACHE_PORT = 6379
-    CACHE_DB = 0
+    DB_PORT: int = 5432
+    DB_USER: str = env('DB_USER')
+    DB_PASSWORD: str = env('DB_PASSWORD')
+    DB_DRIVER: str = 'postgresql+psycopg2'
+    DB_NAME: str = env('DB_NAME')
+    CACHE_HOST: str = 'localhost'
+    CACHE_PORT: int = 6379
+    CACHE_DB: int = 0
 
     @property
     def db_url(self):
