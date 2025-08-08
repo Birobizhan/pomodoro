@@ -1,4 +1,5 @@
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey
 from database import Base
 
 
@@ -9,6 +10,9 @@ class Tasks(Base):
     name: Mapped[str] = mapped_column()
     pomodoro_count: Mapped[int] = mapped_column()
     category_id: Mapped[int]
+    user_id: Mapped[int] = mapped_column(ForeignKey('UserProfile.id'), nullable=False)
+
+    user: Mapped["UserProfile"] = relationship('UserProfile', back_populates='tasks')
 
 
 class Categories(Base):

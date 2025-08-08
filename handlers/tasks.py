@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
+from exception import TaskNotFound
 from service import TaskService
-from shemas.tasks import Task
+from shemas import Task, TaskCreateSchema
 from repository import TaskRepository, CacheTask
-from dependency import get_tasks_repository, get_cache_repository, get_task_service
+from dependency import get_tasks_repository, get_cache_repository, get_task_service, get_request_user_id
 
 router = APIRouter(prefix='/task', tags=['task'])
 fixtures_tasks = []
@@ -15,16 +16,23 @@ async def get_tasks(task_service: TaskService = Depends(get_task_service)):
 
 
 @router.post('/')
-async def create_task(data: Task, task_repository: TaskRepository = Depends(get_tasks_repository)):
-    task_repository.create_task(data)
-    return {'text': 'Create task'}
+async def create_task(body: TaskCreateSchema, task_service: TaskService = Depends(get_task_service),
+                      user_id: int = Depends(get_request_user_id)):
+    task = task_service.create_task(body, user_id)
+    return task
 
 
 @router.patch('/{task_id}')
-async def update_task(task_id: int, name: str, task_repository: TaskRepository = Depends(get_tasks_repository)):
-    return task_repository.update_name(task_id, name)
-
+async def update_task(task_id: int, name: str, task_service: TaskService = Depends(get_task_service),
+                      user_id: int = Depends(get_request_user_id)):
+    try:
+        return task_service.update_name(task_id=task_id, name=name, user_id=user_id)
+    except TaskNotFound as e:
+        raise HTTPException(status_code=404, detail=e.detail)
 
 @router.delete('/{task_id', status_code=204)
-async def delete_task(task_id: int, task_repository: TaskRepository = Depends(get_tasks_repository)):
-    task_repository.delete_task(task_id)
+async def delete_task(task_id: int, task_service: TaskService = Depends(get_task_service), user_id: int = Depends(get_request_user_id)):
+    try:
+        task_service.delete_task(task_id=task_id, user_id=user_id)
+    except TaskNotFound as e:
+        raise HTTPException(status_code=404, detail=e.detail)
