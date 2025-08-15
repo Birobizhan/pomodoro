@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from repository import UserRepository
 from service.auth import AuthService
-from shemas import UserLoginSchema
+from schemas import UserLoginSchema
 
 
 @dataclass

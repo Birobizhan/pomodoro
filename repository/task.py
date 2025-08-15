@@ -1,7 +1,7 @@
 from sqlalchemy import select, delete, update
 from sqlalchemy.orm import Session
 from models import Tasks, Categories
-from shemas import TaskCreateSchema
+from schemas import TaskCreateSchema
 from database import get_db_session
 
 
@@ -9,10 +9,10 @@ class TaskRepository:
     def __init__(self, db_session: Session):
         self.db_session = db_session
 
-    def get_tasks(self):
+    def get_tasks(self, user_id: int):
         with self.db_session() as session:
-            task = session.execute(select(Tasks)).scalars().all()
-        return task
+            tasks = session.execute(select(Tasks).where(Tasks.user_id == user_id)).scalars().all()
+        return tasks
 
     def get_task(self, task_id: int) -> Tasks | None:
         with self.db_session() as session:

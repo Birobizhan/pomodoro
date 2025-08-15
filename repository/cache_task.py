@@ -2,7 +2,7 @@ import json
 
 from redis import Redis
 
-from shemas.tasks import Task
+from schemas.tasks import Task
 
 
 class CacheTask:

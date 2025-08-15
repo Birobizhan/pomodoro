@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from service import UserService
-from shemas import UserCreateSchema, UserLoginSchema
+from schemas import UserCreateSchema, UserLoginSchema
 from dependency import get_user_service
 
 router = APIRouter(prefix='/user', tags=['user'])

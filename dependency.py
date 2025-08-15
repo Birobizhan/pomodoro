@@ -1,4 +1,8 @@
+from typing import Annotated
+
 from fastapi import Depends, Request, security, Security, HTTPException
+
+from client import GoogleClient, YandexClient
 from database import get_db_session
 from exception import TokenExpiredException, TokenINCorrectException
 from repository import TaskRepository, CacheTask, UserRepository
@@ -26,8 +30,16 @@ def get_user_repository(db_session: Session = Depends(get_db_session)) -> UserRe
     return UserRepository(db_session=db_session)
 
 
-def get_auth_service(user_repository: UserRepository = Depends(get_user_repository)) -> AuthService:
-    return AuthService(user_repository=user_repository, settings=Settings())
+def get_yandex_client() -> YandexClient:
+    return YandexClient(settings=Settings())
+
+
+def get_google_client() -> GoogleClient:
+    return GoogleClient(settings=Settings())
+
+
+def get_auth_service(google_client: Annotated[GoogleClient, Depends(get_google_client)], yandex_client: Annotated[YandexClient, Depends(get_yandex_client)], user_repository: UserRepository = Depends(get_user_repository)) -> AuthService:
+    return AuthService(user_repository=user_repository, settings=Settings(), google_client=google_client, yandex_client=yandex_client)
 
 
 def get_user_service(user_repository: UserRepository = Depends(get_user_repository), auth_service: AuthService = Depends(get_auth_service)):

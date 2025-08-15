@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from exception import TaskNotFound
 from repository import TaskRepository, CacheTask
-from shemas import Task, TaskCreateSchema
+from schemas import Task, TaskCreateSchema
 
 
 @dataclass
@@ -10,11 +10,11 @@ class TaskService:
     task_repository: TaskRepository
     task_cache: CacheTask
 
-    def get_tasks(self) -> list[Task]:
+    def get_tasks(self, user_id: int) -> list[Task]:
         if cache_tasks := self.task_cache.get_tasks():
             return cache_tasks
         else:
-            tasks = self.task_repository.get_tasks()
+            tasks = self.task_repository.get_tasks(user_id=user_id)
         tasks_schema = [Task.model_validate(task) for task in tasks]
         self.task_cache.set_tasks(tasks_schema)
         return tasks_schema
