@@ -20,7 +20,12 @@ dependencies = [
     "environs (>=14.3.0,<15.0.0)",
     "python-jose[cryptography] (>=3.5.0,<4.0.0)",
     "uvicorn (>=0.35.0,<0.36.0)",
-    "requests (>=2.32.4,<3.0.0)"
+    "requests (>=2.32.4,<3.0.0)",
+    "httpx (>=0.28.1,<0.29.0)",
+    "asyncpg (>=0.30.0,<0.31.0)",
+    "greenlet (>=3.2.4,<4.0.0)",
+    "gunicorn (>=23.0.0,<24.0.0)",
+    "packaging (>=25.0,<26.0)"
 ]
 
 [tool.poetry]
