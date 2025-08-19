@@ -1,15 +1,16 @@
 import datetime
 from dataclasses import dataclass
-from app.models import UserProfile
-from app.repository import UserRepository
+from app.users.user_profile.models import UserProfile
+from app.users.user_profile.repository import UserRepository
 from app.settings import Settings
-from app.schemas import UserLoginSchema, UserCreateSchema
+from app.users.user_profile.schema import UserCreateSchema
+from app.users.auth.schema import UserLoginSchema
 import datetime as dt
 from datetime import timedelta
 from app.exception import UserNotFoundException, UserIncorrectPasswordException, TokenExpiredException, \
     TokenINCorrectException
 from jose import jwt, JWTError, ExpiredSignatureError
-from app.client import GoogleClient, YandexClient
+from app.users.auth.client import GoogleClient, YandexClient
 
 
 @dataclass

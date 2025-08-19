@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
 from typing import Annotated
 from app.exception import UserNotFoundException, UserIncorrectPasswordException
-from app.service import AuthService
-from app.schemas import UserCreateSchema, UserLoginSchema
+from app.users.auth.service import AuthService
+from app.users.user_profile.schema import UserCreateSchema
+from app.users.auth.schema import UserLoginSchema
 from app.dependency import get_auth_service
 
 router = APIRouter(prefix='/auth', tags=['auth'])
