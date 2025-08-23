@@ -1,5 +1,6 @@
 from app.infrastructure.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from app.tasks.models import Tasks
 
 
 class UserProfile(Base):

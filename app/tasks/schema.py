@@ -1,4 +1,4 @@
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, model_validator, ConfigDict
 
 
 class Task(BaseModel):
@@ -8,8 +8,7 @@ class Task(BaseModel):
     category_id: int
     user_id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
     @model_validator(mode='after')
     def check_name_pomodoro_count(self):

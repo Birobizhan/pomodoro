@@ -10,7 +10,7 @@ from datetime import timedelta
 from app.exception import UserNotFoundException, UserIncorrectPasswordException, TokenExpiredException, \
     TokenINCorrectException
 from jose import jwt, JWTError, ExpiredSignatureError
-from app.users.auth.client import GoogleClient, YandexClient
+from app.users.auth.client import GoogleClient, YandexClient, MailClient
 
 
 @dataclass
@@ -19,6 +19,7 @@ class AuthService:
     settings: Settings
     google_client: GoogleClient
     yandex_client: YandexClient
+    mail_client: MailClient
 
     def get_yandex_redirect_url(self) -> str:
         return self.settings.yandex_redirect_url
@@ -35,11 +36,13 @@ class AuthService:
         created_user = await self.user_repository.create_user(user_data=create_user_data)
         access_token = self.generate_access_token(user_id=created_user.id)
         print('user_create')
+        # self.mail_client.send_welcome_email(to=user_data.email)
         return UserLoginSchema(user_id=created_user.id, access_token=access_token)
 
     async def google_auth(self, code: str) -> UserLoginSchema:
         user_data = await self.google_client.get_user_info(code)
-
+        print(user_data)
+        print('тут еще не сломался')
         if user := await self.user_repository.get_user_by_email(email=user_data.email):
             access_token = self.generate_access_token(user_id=user.id)
             print('user login')
@@ -49,6 +52,7 @@ class AuthService:
         created_user = await self.user_repository.create_user(user_data=create_user_data)
         access_token = self.generate_access_token(user_id=created_user.id)
         print('user_create')
+        # self.mail_client.send_welcome_email(to=user_data.email)
         return UserLoginSchema(user_id=created_user.id, access_token=access_token)
 
     def get_google_redirect_url(self) -> str:
@@ -68,7 +72,7 @@ class AuthService:
             raise UserIncorrectPasswordException
 
     def generate_access_token(self, user_id: int) -> str:
-        expire_date_unix = (dt.datetime.now(datetime.UTC) + timedelta(days=7)).timestamp()
+        expire_date_unix = (dt.datetime.now(tz=dt.UTC) + timedelta(days=7)).timestamp()
         token = jwt.encode({'user_id': user_id, 'exp': expire_date_unix},
                            self.settings.JWT_SECRET_KEY, algorithm=self.settings.JWT_ENCODE_ALGORITHM)
         return token
