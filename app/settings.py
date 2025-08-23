@@ -24,6 +24,13 @@ class Settings(BaseSettings):
     YANDEX_SECRET_KEY: str = env('YANDEX_SECRET_KEY')
     YANDEX_REDIRECT_URI: str = env('YANDEX_REDIRECT_URI')
     YANDEX_TOKEN_URL: str = 'https://oauth.yandex.ru/token'
+    DB_TEST_URL: str = env('DB_TEST_URL')
+    JWT_EXPIRE_MINUTES: int = 60 * 24 * 7
+    CELERY_BROKER_URL: str = env('CELERY_BROKER_URL')
+    from_email: str = env('from_email')
+    SMTP_PORT: int = 465
+    SMTP_HOST: str = 'smtp.gmail.com'
+    SMTP_PASSWORD: str = env('SMTP_PASSWORD')
 
     @property
     def db_url(self):

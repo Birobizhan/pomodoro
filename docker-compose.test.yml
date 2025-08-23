@@ -1,0 +1,23 @@
+services:
+  db-test:
+    image: postgres:17.5
+    restart: always
+    shm_size: 128mb
+    ports:
+      - '${DB_TEST_PORT:-5433}:5432'
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+    env_file:
+      - ./.local.env
+  cache-test:
+    image: redis:8.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+  rabbitmq-test:
+    image: rabbitmq:3-management
+    ports:
+      - '5672:5672'
+      - '15672:15672'

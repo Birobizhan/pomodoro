@@ -1,6 +1,8 @@
 from dataclasses import dataclass
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy import insert, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.users.user_profile.models import UserProfile
 from app.users.user_profile.schema import UserCreateSchema
 
@@ -15,11 +17,11 @@ class UserRepository:
             return (await session.execute(query)).scalar_one_or_none()
 
     async def create_user(self, user_data: UserCreateSchema) -> UserProfile:
-        query = (insert(UserProfile).values(**user_data.dict(exclude_none=True))
-                 .returning(UserProfile.id))
+        query = insert(UserProfile).values(**user_data.dict(exclude_none=True)).returning(UserProfile.id)
         async with self.db_session as session:
             user_id: int = (await session.execute(query)).scalar()
             await session.commit()
+            await session.flush()
             return await self.get_user(user_id)
 
     async def get_user(self, user_id) -> UserProfile | None:
