@@ -1,11 +1,24 @@
+import json
+import uuid
+import aio_pika
+from dataclasses import dataclass
 
-from worker.celery import send_email_task
+from app.broker.consumer import BrokerConsumer
+from app.broker.producer import BrokerProducer
+from app.settings import Settings
 
 
+@dataclass
 class MailClient:
-    @staticmethod
-    def send_welcome_email(to: str) -> None:
-        task_id = send_email_task.delay(f'welcome email', f'welcome to pomodoro', to)
-        return task_id
+    settings: Settings
+    broker_producer: BrokerProducer
 
-
+    async def send_welcome_email(self, to: str) -> None:
+        email_body = {
+            'message': 'Welcome to pomodoro',
+            'user_email': to,
+            'subject': 'Welcome message',
+            'correlation_id': str(uuid.uuid4())
+        }
+        await self.broker_producer.send_welcome_email(email_data=email_body)
+        return

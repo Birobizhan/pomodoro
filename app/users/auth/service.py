@@ -36,13 +36,12 @@ class AuthService:
         created_user = await self.user_repository.create_user(user_data=create_user_data)
         access_token = self.generate_access_token(user_id=created_user.id)
         print('user_create')
-        # self.mail_client.send_welcome_email(to=user_data.email)
+        await self.mail_client.send_welcome_email(to=user_data.email)
         return UserLoginSchema(user_id=created_user.id, access_token=access_token)
 
     async def google_auth(self, code: str) -> UserLoginSchema:
         user_data = await self.google_client.get_user_info(code)
         print(user_data)
-        print('тут еще не сломался')
         if user := await self.user_repository.get_user_by_email(email=user_data.email):
             access_token = self.generate_access_token(user_id=user.id)
             print('user login')
@@ -52,7 +51,7 @@ class AuthService:
         created_user = await self.user_repository.create_user(user_data=create_user_data)
         access_token = self.generate_access_token(user_id=created_user.id)
         print('user_create')
-        # self.mail_client.send_welcome_email(to=user_data.email)
+        await self.mail_client.send_welcome_email(to=user_data.email)
         return UserLoginSchema(user_id=created_user.id, access_token=access_token)
 
     def get_google_redirect_url(self) -> str:
