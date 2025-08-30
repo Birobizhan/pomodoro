@@ -19,7 +19,7 @@ class FakeGoogleClient:
         return google_user_info_data()
 
     @staticmethod
-    async def _get_user_access_token(self, code: str) -> str:
+    async def _get_user_access_token(code: str) -> str:
         return f"fake_access_token {code}"
 
 
@@ -33,7 +33,7 @@ class FakeYandexClient:
         return yandex_user_info_data()
 
     @staticmethod
-    async def _get_user_access_token(self, code: str) -> str:
+    async def _get_user_access_token(code: str) -> str:
         return f"fake_access_token {code}"
 
 
