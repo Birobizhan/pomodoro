@@ -41,12 +41,11 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Create .env file from secret # <--- НОВЫЙ ШАГ
+      - name: Create .local.env file from secret # Изменено название шага для ясности
         run: |
-          echo "${{ secrets.DOTENV_FILE_CONTENT }}" > .env
-          # Опционально: проверьте, что файл создан (не выводите содержимое, если оно содержит секреты!)
-          ls -l .env
-          cat .env | head -n 1 # Только для проверки, что файл не пуст, но не для вывода секретов!
+          echo "${{ secrets.DOTENV_FILE_CONTENT }}" > .local.env # <--- ИЗМЕНЕНО ЗДЕСЬ
+          ls -l .local.env # <--- ИЗМЕНЕНО ЗДЕСЬ
+          cat .local.env | head -n 1 # <--- ИЗМЕНЕНО ЗДЕСЬ
       - name: Install Dependencies
         run:
           |
