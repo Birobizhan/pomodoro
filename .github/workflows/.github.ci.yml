@@ -10,6 +10,8 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4 # <-- Добавьте эту строку
     - name: Install Dependencies
       run:
           |
@@ -21,6 +23,8 @@ jobs:
   unit-test:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4 # <-- И эту строку
       - name: Install Dependencies
         run:
             |
