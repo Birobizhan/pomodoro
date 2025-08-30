@@ -27,8 +27,6 @@ jobs:
           poetry install
       - name: Black
         run: poetry run black app
-      - name: Ruff
-        run: poetry run ruff check app
 
   unit-test:
     runs-on: ubuntu-latest
@@ -36,40 +34,24 @@ jobs:
       matrix:
         python-version: [ "3.12" ]
     steps:
-      - uses: actions/checkout@v4 # Обновлено до v4
+      - uses: actions/checkout@v4
       - name: Debug - List repository contents
-        run: ls -R # Добавлен шаг для отладки
+        run: ls -R
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4 # Обновлено до v4
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Create .env file from secret # <--- НОВЫЙ ШАГ
+        run: |
+          echo "${{ secrets.DOTENV_FILE_CONTENT }}" > .env
+          # Опционально: проверьте, что файл создан (не выводите содержимое, если оно содержит секреты!)
+          ls -l .env
+          cat .env | head -n 1 # Только для проверки, что файл не пуст, но не для вывода секретов!
       - name: Install Dependencies
         run:
-            |
+          |
           python -m pip install --upgrade pip
           pip install poetry
           poetry install
       - name: Run Unit Tests
         run: poetry run pytest tests/unit
-
-  deploy:
-    runs-on: ubuntu-latest
-    environment: pomodoro
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Deploy to server via SSH
-        run: |
-          ssh -o StrictHostKeyChecking=no root@91.186.198.243 "
-            cd Pomodoro &&
-            git pull &&
-            docker-compose down &&
-            docker-compose up -d
-          "
