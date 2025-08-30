@@ -5,13 +5,13 @@ env.read_env('.local.env')
 
 
 class Settings(BaseSettings):
-    DB_HOST: str = 'localhost'
+    DB_HOST: str = 'db'
     DB_PORT: int = 5432
     DB_USER: str = env('DB_USER')
     DB_PASSWORD: str = env('DB_PASSWORD')
     DB_DRIVER: str = 'postgresql+asyncpg'
     DB_NAME: str = env('DB_NAME')
-    CACHE_HOST: str = 'localhost'
+    CACHE_HOST: str = 'cache'
     CACHE_PORT: int = 6379
     CACHE_DB: int = 0
     JWT_SECRET_KEY: str = env('JWT_SECRET_KEY')
@@ -24,13 +24,12 @@ class Settings(BaseSettings):
     YANDEX_SECRET_KEY: str = env('YANDEX_SECRET_KEY')
     YANDEX_REDIRECT_URI: str = env('YANDEX_REDIRECT_URI')
     YANDEX_TOKEN_URL: str = 'https://oauth.yandex.ru/token'
+    CELERY_BROKER_URL: str = env('CELERY_BROKER_URL')
+    SMTP_PASSWORD: str = env('SMTP_PASSWORD')
+    from_email: str = env('from_email')
     DB_TEST_URL: str = env('DB_TEST_URL')
-    JWT_EXPIRE_MINUTES: int = 60 * 24 * 7
-    AMQP_URL: str = env('CELERY_BROKER_URL')
-    BROKER_URL: str = 'localhost:9092'
-    EMAIL_TOPIC: str = 'email_topic'
-    EMAIL_CALLBACK_TOPIC: str = 'callback_email_topic'
-
+    SMTP_PORT: int = 465
+    SMTP_HOST: str = 'smtp.gmail.com'
 
     @property
     def db_url(self):

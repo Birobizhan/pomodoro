@@ -1,25 +1,15 @@
-import asyncio
-import time
-
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException
 from app.exception import TaskNotFound
 from app.tasks.service import TaskService
 from app.tasks.schema import Task, TaskCreateSchema
 from app.dependency import get_task_service, get_request_user_id
 
 router = APIRouter(prefix='/task', tags=['task'])
-fixtures_tasks = []
-
-
-async def get_tasks_log(tasks_count: int):
-    await asyncio.sleep(3.0)
-    print(f'get {tasks_count} tasks')
 
 
 @router.get('/all', response_model=list[Task])
-async def get_tasks(background_tasks: BackgroundTasks,task_service: TaskService = Depends(get_task_service), user_id: int = Depends(get_request_user_id)):
+async def get_tasks(task_service: TaskService = Depends(get_task_service), user_id: int = Depends(get_request_user_id)):
     tasks = await task_service.get_tasks(user_id=user_id)
-    background_tasks.add_task(get_tasks_log, tasks_count=len(tasks))
     return tasks
 
 

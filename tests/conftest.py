@@ -1,6 +1,4 @@
 import asyncio
-import sys
-
 import pytest
 
 

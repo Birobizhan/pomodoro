@@ -1,4 +1,3 @@
-
 import pytest
 import pytest_asyncio
 from sqlalchemy import select, insert
@@ -6,6 +5,7 @@ from app.users.user_profile.models import UserProfile
 from tests.fixtures.users.user_model import EXISTS_GOOGLE_USER_ID, EXISTS_GOOGLE_USER_EMAIL
 
 # pytestmark = pytest.mark.asyncio
+
 
 @pytest.mark.asyncio
 async def test_google_auth__login_not_exist_user(auth_service, get_db_session, init_db_for_tests):
@@ -25,6 +25,7 @@ async def test_google_auth__login_not_exist_user(auth_service, get_db_session, i
 
     assert login_user is not None
 
+
 @pytest.mark.asyncio
 async def test_google_auth__login_exist_user(auth_service, get_db_session, init_db_for_tests):
     query = insert(UserProfile).values(
@@ -41,6 +42,7 @@ async def test_google_auth__login_exist_user(auth_service, get_db_session, init_
 
     assert login_user.email == EXISTS_GOOGLE_USER_EMAIL
     assert user_data.user_id == EXISTS_GOOGLE_USER_ID
+
 
 @pytest.mark.asyncio
 async def test_base_login__success(auth_service, get_db_session, init_db_for_tests):

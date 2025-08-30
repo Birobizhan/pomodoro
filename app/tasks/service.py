@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-
 from app.exception import TaskNotFound
 from app.tasks.repository import TaskRepository, CacheTask
 from app.tasks.schema import Task, TaskCreateSchema

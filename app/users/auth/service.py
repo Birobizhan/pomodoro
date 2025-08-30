@@ -1,4 +1,3 @@
-import datetime
 from dataclasses import dataclass
 from app.users.user_profile.models import UserProfile
 from app.users.user_profile.repository import UserRepository

@@ -1,14 +1,9 @@
 from dataclasses import dataclass
 import pytest
 import httpx
-
 from app.settings import Settings
 from app.users.auth.schema import GoogleUserData, YandexUserData
-
-import factory.fuzzy
-from pytest_factoryboy import register
 from faker import Factory as FakerFactory
-
 from tests.fixtures.users.user_model import EXISTS_GOOGLE_USER_ID, EXISTS_GOOGLE_USER_EMAIL
 
 faker = FakerFactory.create()
@@ -23,8 +18,10 @@ class FakeGoogleClient:
         access_token = await self._get_user_access_token(code=code)
         return google_user_info_data()
 
+    @staticmethod
     async def _get_user_access_token(self, code: str) -> str:
         return f"fake_access_token {code}"
+
 
 @dataclass
 class FakeYandexClient:
@@ -35,6 +32,7 @@ class FakeYandexClient:
         access_token = await self._get_user_access_token(code=code)
         return yandex_user_info_data()
 
+    @staticmethod
     async def _get_user_access_token(self, code: str) -> str:
         return f"fake_access_token {code}"
 
