@@ -45,8 +45,12 @@ dependencies = [
 [tool.poetry.group.dev.dependencies]
 black = "^25.1.0"
 ruff = "^0.12.11"
+
+#[tool.poetry]
+#packages = [{include = "pomodoro_poetry", from = "src"}]
+
 [tool.poetry]
-packages = [{include = "pomodoro_poetry", from = "src"}]
+packages = [{include = "app"}]
 
 [tool.pytest.ini_options]
 asyncio_mode = "strict"

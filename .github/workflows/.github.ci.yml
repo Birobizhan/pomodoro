@@ -12,9 +12,11 @@ jobs:
       matrix:
         python-version: [ "3.12" ]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4 # Обновлено до v4
+      - name: Debug - List repository contents
+        run: ls -R # Добавлен шаг для отладки
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4 # Обновлено до v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Dependencies
@@ -34,9 +36,11 @@ jobs:
       matrix:
         python-version: [ "3.12" ]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4 # Обновлено до v4
+      - name: Debug - List repository contents
+        run: ls -R # Добавлен шаг для отладки
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4 # Обновлено до v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Dependencies
