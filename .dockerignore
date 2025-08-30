@@ -1,4 +1,7 @@
-alembic.ini
+.venv/
 docker-compose.test.yml
 docker-compose.yml
 tests/
+__pycache__/
+*.pyc
+.idea/

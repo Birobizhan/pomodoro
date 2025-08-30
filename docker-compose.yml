@@ -11,8 +11,6 @@ services:
   celery_worker:
     build: .
     command: poetry run celery -A worker.celery worker --loglevel=info
-    volumes:
-      - .:/app
     depends_on:
       - rabbitmq
       - cache
