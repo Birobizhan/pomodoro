@@ -1,6 +1,6 @@
 from sqlalchemy import select, delete, update, insert
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.tasks.models import Tasks, Categories
+from app.tasks.models import Tasks, Categories, TaskStatus
 from app.tasks.schema import TaskCreateSchema
 
 
@@ -19,7 +19,7 @@ class TaskRepository:
         return task
 
     async def create_task(self, task: TaskCreateSchema, user_id: int) -> int:
-        query = insert(Tasks).values(name=task.name, pomodoro_count=task.pomodoro_count, category_id=task.category_id, user_id=user_id).returning(Tasks.id)
+        query = insert(Tasks).values(name=task.name, pomodoro_count=task.pomodoro_count, category_id=task.category_id, user_id=user_id, status=TaskStatus.PLANNED).returning(Tasks.id)
         async with self.db_session as session:
             task_model = (await session.execute(query)).scalar_one_or_none()
             await session.commit()

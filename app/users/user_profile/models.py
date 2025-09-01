@@ -12,4 +12,7 @@ class UserProfile(Base):
     yandex_access_token: Mapped[str | None] = mapped_column()
     email: Mapped[str | None] = mapped_column()
     name: Mapped[str | None] = mapped_column()
+    work_duration: Mapped[int] = mapped_column()
+    short_break_duration: Mapped[int] = mapped_column()
+    long_break_duration: Mapped[int] = mapped_column()
     tasks: Mapped[list["Tasks"]] = relationship('Tasks', back_populates='user')

@@ -18,6 +18,10 @@ class TaskService:
         await self.task_cache.set_tasks(tasks_schema)
         return tasks_schema
 
+    async def get_task_by_id(self, task_id: int, user_id: int):
+        task = await self.task_repository.get_user_task(task_id=task_id, user_id=user_id)
+        return Task.model_validate(task)
+
     async def create_task(self, body: TaskCreateSchema, user_id: int) -> Task:
         task_id = await self.task_repository.create_task(body, user_id)
         task = await self.task_repository.get_task(task_id)

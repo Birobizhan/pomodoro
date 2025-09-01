@@ -1,5 +1,7 @@
 from pydantic import BaseModel, model_validator, ConfigDict
 
+from app.tasks.models import TaskStatus
+
 
 class Task(BaseModel):
     id: int
@@ -7,6 +9,7 @@ class Task(BaseModel):
     pomodoro_count: int | None = None
     category_id: int
     user_id: int
+    status: TaskStatus = TaskStatus.PLANNED
 
     model_config = ConfigDict(from_attributes=True)
 

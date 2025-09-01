@@ -13,6 +13,13 @@ async def get_tasks(task_service: TaskService = Depends(get_task_service), user_
     return tasks
 
 
+@router.get('/{task_id}')
+async def get_task_by_id(task_id: int, task_service: TaskService = Depends(get_task_service),
+                         user_id: int = Depends(get_request_user_id)):
+    task = await task_service.get_task_by_id(task_id=task_id, user_id=user_id)
+    return task
+
+
 @router.post('/')
 async def create_task(body: TaskCreateSchema, task_service: TaskService = Depends(get_task_service),
                       user_id: int = Depends(get_request_user_id)):
