@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from fastapi import HTTPException
 from app.users.user_profile.repository import UserRepository
 from app.users.auth.service import AuthService
 from app.users.user_profile.schema import UserCreateSchema, UserSettingsSchema
@@ -14,6 +15,9 @@ class UserService:
                           short_break_duration: int = 5, long_break_duration: int = 20) -> UserLoginSchema:
         user_data_create = UserCreateSchema(username=username, password=password, work_duration=work_duration,
                                             short_break_duration=short_break_duration, long_break_duration=long_break_duration)
+        try_user_search = await self.user_repository.get_user_by_username(username=username)
+        if try_user_search:
+            raise HTTPException(status_code=400, detail='Пользователь с таким именем уже существует')
         user = await self.user_repository.create_user(user_data_create)
         access_token = self.auth_service.generate_access_token(user_id=user.id)
         return UserLoginSchema(user_id=user.id, access_token=access_token)

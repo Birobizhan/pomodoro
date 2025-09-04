@@ -1,7 +1,7 @@
 import asyncio
 from logging.config import fileConfig
 from app.infrastructure.database.database import Base
-from app.tasks.models import Tasks, Categories
+from app.tasks.models import Tasks
 from app.users.user_profile.models import UserProfile
 from app.settings import Settings
 from sqlalchemy import pool

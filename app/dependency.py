@@ -1,5 +1,8 @@
 from fastapi import Depends, security, Security, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.timer.repository import TimerRepository
+from app.timer.service import TimerService
 from app.users.auth.client import GoogleClient, YandexClient, MailClient
 from app.infrastructure.database import get_db_session
 from app.exception import TokenExpiredException, TokenINCorrectException
@@ -66,3 +69,11 @@ async def get_request_user_id(auth_service: AuthService = Depends(get_auth_servi
     except TokenINCorrectException:
         raise HTTPException(status_code=401, detail='Unauthorized')
     return user_id
+
+
+async def get_timer_repository(db_session: AsyncSession = Depends(get_db_session)) -> TimerRepository:
+    return TimerRepository(db_session)
+
+
+async def get_timer_service(timer_repository: TimerRepository = Depends(get_timer_repository)) -> TimerService:
+    return TimerService(timer_repository=timer_repository)

@@ -36,7 +36,7 @@ async def update_task(task_id: int, name: str, task_service: TaskService = Depen
         raise HTTPException(status_code=404, detail=e.detail)
 
 
-@router.delete('/{task_id', status_code=204)
+@router.delete('/{task_id}', status_code=204)
 async def delete_task(task_id: int, task_service: TaskService = Depends(get_task_service), user_id: int = Depends(get_request_user_id)):
     try:
         await task_service.delete_task(task_id=task_id, user_id=user_id)

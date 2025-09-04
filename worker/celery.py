@@ -1,16 +1,63 @@
+import json
 import smtplib
 import ssl
+import time
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
+import redis
 from app.settings import Settings
 from celery import Celery
+from app.timer.repository import TimerRepository
+from app.infrastructure.database.accessor import get_db_session
 
 settings = Settings()
 
 celery = Celery(__name__)
 celery.conf.broker_url = settings.CELERY_BROKER_URL
-celery.conf.result_backend = 'rpc://'
+celery.conf.result_backend = 'redis://cache:6379'
+
+redis_client = redis.Redis(host='cache', port=6379)
+
+
+@celery.task(bind=True, name='timer')
+def run_pomodoro_timer(self, timer_id: str):
+    while True:
+        state_json = redis_client.get(timer_id)
+        if not state_json:
+            break
+
+        state = json.loads(state_json)
+
+        if state.get("is_running", False):
+            time.sleep(1)
+            continue
+
+        current_duration = state["work_duration"] if state["session_type"] == "work" else state["break_duration"]
+        elapsed = time.time() - state["start_time"]
+        remaining = current_duration - elapsed
+        state["time_left"] = max(0, int(remaining))
+
+        if remaining <= 0:
+            if state["session_type"] == "work":
+                state["pomodoro_count"] -= 1
+                if state["pomodoro_count"] <= 0:
+                    redis_client.delete(timer_id)
+                    id_task = str(self.request.id)
+                    celery.control.revoke(id_task, terminate=True)
+                    timer_repo = TimerRepository(get_db_session())
+                    timer_repo.change_status_completed(task_id=int(timer_id))
+                    break
+                else:
+                    state["session_type"] = "break"
+                    state["time_left"] = state["break_duration"]
+            else:
+                state["session_type"] = "work"
+                state["time_left"] = state["work_duration"]
+
+            state["start_time"] = time.time()
+
+        redis_client.set(timer_id, json.dumps(state))
+        time.sleep(1)
 
 
 @celery.task(name='send_mail_task')

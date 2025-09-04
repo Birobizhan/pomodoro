@@ -19,6 +19,7 @@ async def create_user(body: UserCreateBasicSchema, user_service: UserService = D
 async def get_settings(user_service: Annotated[UserService, Depends(get_user_service)],user_id: int = Depends(get_request_user_id)):
     return await user_service.get_settings_user(user_id=user_id)
 
+
 @router.patch('/settings')
 async def set_settings(body: UserSettingsSchema, user_service: Annotated[UserService, Depends(get_user_service)],
                        user_id: int = Depends(get_request_user_id)):

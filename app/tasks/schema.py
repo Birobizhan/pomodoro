@@ -7,7 +7,6 @@ class Task(BaseModel):
     id: int
     name: str | None = None
     pomodoro_count: int | None = None
-    category_id: int
     user_id: int
     status: TaskStatus = TaskStatus.PLANNED
 
@@ -23,4 +22,3 @@ class Task(BaseModel):
 class TaskCreateSchema(BaseModel):
     name: str | None = None
     pomodoro_count: int | None = None
-    category_id: int

@@ -3,7 +3,7 @@ from fastapi.responses import RedirectResponse
 from typing import Annotated
 from app.exception import UserNotFoundException, UserIncorrectPasswordException
 from app.users.auth.service import AuthService
-from app.users.user_profile.schema import UserCreateSchema
+from app.users.user_profile.schema import UserCreateSchema, UserLoginProcessSchema
 from app.users.auth.schema import UserLoginSchema
 from app.dependency import get_auth_service
 
@@ -11,7 +11,7 @@ router = APIRouter(prefix='/auth', tags=['auth'])
 
 
 @router.post('/login', response_model=UserLoginSchema)
-async def login(body: UserCreateSchema, auth_service: AuthService = Depends(get_auth_service)):
+async def login(body: UserLoginProcessSchema, auth_service: AuthService = Depends(get_auth_service)):
     try:
         return await auth_service.login(body.username, body.password)
     except UserNotFoundException as e:

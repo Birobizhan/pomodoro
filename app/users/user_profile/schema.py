@@ -26,3 +26,8 @@ class UserCreateSchema(BaseModel):
     work_duration: int = 25
     short_break_duration: int = 5
     long_break_duration: int = 15
+
+
+class UserLoginProcessSchema(BaseModel):
+    username: str
+    password: str
