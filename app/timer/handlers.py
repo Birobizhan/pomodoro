@@ -8,7 +8,8 @@ import json
 import redis
 
 from app.users.user_profile.service import UserService
-from worker.celery import run_pomodoro_timer
+from worker.celery import run_pomodoro_timer_task
+
 
 router = APIRouter(prefix='/timer', tags=['timer'])
 redis_client: Redis = redis.Redis(host='cache', port=6379)
@@ -52,8 +53,8 @@ async def start_task(task_id: int, user_service: Annotated[UserService, Depends(
         "start_time": time.time(),
     })
     redis_client.set(str(task_id), json.dumps(new_state))
-    run_pomodoro_timer.delay(str(task_id))
-    await timer_service.change_status_in_progress(task_id=task_id)
+    print(">>> sending task to celery:", str(task_id), type(str(task_id)), type(run_pomodoro_timer_task))
+    run_pomodoro_timer_task.delay(str(task_id))
     return {"message": "Таймер запущен.", "state": new_state}
 
 
@@ -66,7 +67,7 @@ async def pause_timer(task_id: int, timer_service: TimerService = Depends(get_ti
         raise HTTPException(status_code=404, detail="Таймер не найден")
 
     state = json.loads(state_json)
-    permission = timer_service.check_permission(task_id=task_id, user_id=user_id)
+    permission = await timer_service.check_permission(task_id=task_id, user_id=user_id)
     if permission:
         if state["start_time"] is not None:
             current_duration = state["work_duration"] if state["session_type"] == "work" else state["break_duration"]
@@ -87,7 +88,7 @@ async def reset_timer(task_id: int, timer_service: TimerService = Depends(get_ti
     state_json = redis_client.get(str(task_id))
     if not state_json:
         raise HTTPException(status_code=404, detail="Таймер не найден")
-    permission = timer_service.check_permission(task_id=task_id, user_id=user_id)
+    permission = await timer_service.check_permission(task_id=task_id, user_id=user_id)
     if permission:
         state = json.loads(state_json)
         state["is_running"] = True
@@ -95,8 +96,8 @@ async def reset_timer(task_id: int, timer_service: TimerService = Depends(get_ti
             state['start_time'] = time.time() + state['time_left'] - state['work_duration']
         else:
             state['start_time'] = time.time() + state['time_left'] - state['break_duration']
-        redis_client.set(str(task_id), json.dumps(state))
         await timer_service.change_status_in_progress(task_id=task_id)
+        redis_client.set(str(task_id), json.dumps(state))
         return {"message": "Таймер снят с паузы.", "state": state}
     else:
         raise HTTPException(status_code=403, detail='У вас нет прав доступа к этой задаче')
@@ -109,7 +110,7 @@ async def get_status(task_id: int, timer_service: TimerService = Depends(get_tim
     state_json = redis_client.get(str(task_id))
     if not state_json:
         return HTTPException(status_code=404, detail="Таймер не найден")
-    permission = timer_service.check_permission(task_id=task_id, user_id=user_id)
+    permission = await timer_service.check_permission(task_id=task_id, user_id=user_id)
     if permission:
         return json.loads(state_json)
     else:
@@ -122,15 +123,16 @@ async def end_task(task_id: int, timer_service: TimerService = Depends(get_timer
     state_json = redis_client.get(str(task_id))
     if not state_json:
         raise HTTPException(status_code=404, detail="Таймер не найден")
-    permission = timer_service.check_permission(task_id=task_id, user_id=user_id)
+    permission = await timer_service.check_permission(task_id=task_id, user_id=user_id)
     if permission:
         state = json.loads(state_json)
         state['is_running'] = False
         state['pomodoro_count'] = 0
         state['time_left'] = 0
+        await timer_service.change_status_completed(task_id=task_id)
         redis_client.set(str(task_id), json.dumps(state))
         redis_client.delete(str(task_id))
-        await timer_service.change_status_completed(task_id=task_id)
+
         return {"message": "Задача досрочно завершена"}
     else:
         raise HTTPException(status_code=403, detail='У вас нет прав доступа к этой задаче')
@@ -142,7 +144,7 @@ async def skip_step(task_id: int, timer_service: TimerService = Depends(get_time
     state_json = redis_client.get(str(task_id))
     if not state_json:
         raise HTTPException(status_code=404, detail="Таймер не найден")
-    permission = timer_service.check_permission(task_id=task_id, user_id=user_id)
+    permission = await timer_service.check_permission(task_id=task_id, user_id=user_id)
     if permission:
         state = json.loads(state_json)
         if state['session_type'] == "work":

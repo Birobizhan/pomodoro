@@ -21,10 +21,10 @@ class TimerService:
         return False
 
     async def change_status_in_progress(self, task_id: int):
-        await self.change_status_in_progress(task_id=task_id)
+        await self.timer_repository.change_status_in_progress(task_id=task_id)
 
     async def change_status_planned(self, task_id: int):
-        await self.change_status_planned(task_id=task_id)
+        await self.timer_repository.change_status_planned(task_id=task_id)
 
     async def change_status_completed(self, task_id: int):
-        await self.change_status_completed(task_id=task_id)
+        await self.timer_repository.change_status_completed(task_id=task_id)
