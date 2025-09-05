@@ -23,6 +23,7 @@ redis_client = redis.Redis(host='cache', port=6379)
 
 @celery.task(bind=True, name='run_pomodoro_timer')
 def run_pomodoro_timer_task(self, timer_id: str):
+    """Celery задача для таймера"""
     while True:
         state_json = redis_client.get(timer_id)
         if not state_json:
@@ -63,6 +64,7 @@ def run_pomodoro_timer_task(self, timer_id: str):
 
 @celery.task(name='send_mail_task')
 def send_email_task(subject: str, text: str, to: str) -> None:
+    """Celery задача по отправке писем зарегистрировавшемуся пользователю"""
     msg = _build_message(subject, text, to)
     _send_email(msg=msg)
 

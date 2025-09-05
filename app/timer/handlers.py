@@ -29,6 +29,7 @@ def get_initial_state():
 @router.get('/{task_id}')
 async def get_task_by_id(task_id: int, timer_service: TimerService = Depends(get_timer_service),
                          user_id: int = Depends(get_request_user_id)):
+    """Ручка для получения задачи по id"""
     task = await timer_service.get_task_by_id(task_id=task_id, user_id=user_id)
     return task
 
@@ -37,8 +38,8 @@ async def get_task_by_id(task_id: int, timer_service: TimerService = Depends(get
 async def start_task(task_id: int, user_service: Annotated[UserService, Depends(get_user_service)],
                      timer_service: TimerService = Depends(get_timer_service),
                      user_id: int = Depends(get_request_user_id)):
+    """Ручка для старта таймера"""
     settings = await user_service.get_settings_user(user_id=user_id)
-    print(type(redis_client))
     state = json.loads(redis_client.get(str(task_id)) or '{}')
     if state.get("is_running"):
         raise HTTPException(status_code=400, detail="Таймер уже запущен")
@@ -53,7 +54,6 @@ async def start_task(task_id: int, user_service: Annotated[UserService, Depends(
         "start_time": time.time(),
     })
     redis_client.set(str(task_id), json.dumps(new_state))
-    print(">>> sending task to celery:", str(task_id), type(str(task_id)), type(run_pomodoro_timer_task))
     run_pomodoro_timer_task.delay(str(task_id))
     return {"message": "Таймер запущен.", "state": new_state}
 
@@ -120,6 +120,7 @@ async def get_status(task_id: int, timer_service: TimerService = Depends(get_tim
 @router.post('/end/{task_id}')
 async def end_task(task_id: int, timer_service: TimerService = Depends(get_timer_service),
                    user_id: int = Depends(get_request_user_id)):
+    """Досрочно заканчивает задачу"""
     state_json = redis_client.get(str(task_id))
     if not state_json:
         raise HTTPException(status_code=404, detail="Таймер не найден")
@@ -141,6 +142,7 @@ async def end_task(task_id: int, timer_service: TimerService = Depends(get_timer
 @router.post('/skip/{task_id}')
 async def skip_step(task_id: int, timer_service: TimerService = Depends(get_timer_service),
                     user_id: int = Depends(get_request_user_id)):
+    """Ручка для пропуска этапа, отдыха или работы"""
     state_json = redis_client.get(str(task_id))
     if not state_json:
         raise HTTPException(status_code=404, detail="Таймер не найден")

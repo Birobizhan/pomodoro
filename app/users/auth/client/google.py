@@ -9,11 +9,11 @@ class GoogleClient:
     settings: Settings
 
     async def get_user_info(self, code: str) -> GoogleUserData:
+        """Метод для авторизации через google"""
         access_token = await self._get_user_access_token(code=code)
         async with httpx.AsyncClient() as client:
             user_info = await client.get('https://www.googleapis.com/oauth2/v1/userinfo',
                                          headers={"Authorization": f"Bearer {access_token}"})
-            print(user_info)
         return GoogleUserData(**user_info.json(), access_token=access_token)
 
     async def _get_user_access_token(self, code: str):

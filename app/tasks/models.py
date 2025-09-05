@@ -23,6 +23,3 @@ class Tasks(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('UserProfile.id'), nullable=False)
     status: Mapped[TaskStatus] = mapped_column(postgresql.ENUM(TaskStatus, name='status', create_type=False), default=TaskStatus.PLANNED, nullable=False)
     user: Mapped["UserProfile"] = relationship('UserProfile', back_populates='tasks')
-
-
-

@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from app.tasks.models import TaskStatus
 
 
 class TaskTimer(BaseModel):

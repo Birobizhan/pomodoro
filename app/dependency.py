@@ -1,6 +1,5 @@
 from fastapi import Depends, security, Security, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.timer.repository import TimerRepository
 from app.timer.service import TimerService
 from app.users.auth.client import GoogleClient, YandexClient, MailClient

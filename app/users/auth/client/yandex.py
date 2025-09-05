@@ -9,6 +9,7 @@ class YandexClient:
     settings: Settings
 
     async def get_user_info(self, code: str):
+        """Метод для регистрации через яндекс"""
         access_token = await self._get_user_access_token(code=code)
         async with httpx.AsyncClient() as client:
             user_info = await client.get('https://login.yandex.ru/info?format=json',
@@ -25,5 +26,4 @@ class YandexClient:
             }, headers={
                 "Content-Type": "application/x-www-form-urlencoded"
             })
-            print(response.json())
         return response.json()['access_token']

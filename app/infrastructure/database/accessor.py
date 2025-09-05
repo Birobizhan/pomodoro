@@ -9,5 +9,6 @@ AsyncSessionFactory = async_sessionmaker(engine, autoflush=False, expire_on_comm
 
 
 async def get_db_session() -> AsyncSession:
+    """Функция для получения сессии асинхронной базы данных"""
     async with AsyncSessionFactory() as session:
         yield session

@@ -13,6 +13,7 @@ class UserService:
 
     async def create_user(self, username: str, password: str, work_duration: int = 25,
                           short_break_duration: int = 5, long_break_duration: int = 20) -> UserLoginSchema:
+        """Создание пользователя"""
         user_data_create = UserCreateSchema(username=username, password=password, work_duration=work_duration,
                                             short_break_duration=short_break_duration, long_break_duration=long_break_duration)
         try_user_search = await self.user_repository.get_user_by_username(username=username)
@@ -23,12 +24,14 @@ class UserService:
         return UserLoginSchema(user_id=user.id, access_token=access_token)
 
     async def get_settings_user(self, user_id: int) -> UserSettingsSchema:
+        """Получение настроек пользователя"""
         user_data = await self.user_repository.get_user(user_id=user_id)
         settings = UserSettingsSchema(username=user_data.username, work_duration=user_data.work_duration,
                                       short_break_duration=user_data.short_break_duration, long_break_duration=user_data.long_break_duration)
         return settings
 
     async def set_settings_user(self, user_id, user_data: UserSettingsSchema):
+        """Обновление настроек пользователя"""
         try:
             user_settings = await self.user_repository.update_user_settings(user_id=user_id, user_data=user_data)
             return user_settings
