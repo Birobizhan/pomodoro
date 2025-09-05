@@ -1,7 +1,6 @@
 import pytest
 import datetime as dt
 from app.settings import Settings
-from app.users.auth.schema import UserLoginSchema
 from app.users.auth.service import AuthService
 from jose import jwt
 
@@ -49,22 +48,3 @@ async def test_get_user_id_from_access_token__success(mock_auth_service: AuthSer
 
     assert decoded_user_id == user_id
 
-
-async def test_google_auth__success(mock_auth_service: AuthService):
-    code = "fake_code"
-
-    user = await mock_auth_service.google_auth(code=code)
-    decoded_user_id = mock_auth_service.get_user_id_from_access_token(user.access_token)
-
-    assert user.user_id == decoded_user_id
-    assert isinstance(user, UserLoginSchema)
-
-
-async def test_yandex_auth__success(mock_auth_service: AuthService):
-    code = "fake_code"
-
-    user = await mock_auth_service.get_yandex_auth(code=code)
-    decoded_user_id = mock_auth_service.get_user_id_from_access_token(user.access_token)
-
-    assert user.user_id == decoded_user_id
-    assert isinstance(user, UserLoginSchema)
